@@ -1,6 +1,6 @@
 import { GameData } from "../mod.ts";
 
-export function partOne(input: GameData[]) {
+export function partOne(input: GameData[]): number {
   return input
     .filter((game: GameData) => {
       return game.results.get("red")! <= 12 &&

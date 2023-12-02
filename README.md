@@ -30,6 +30,15 @@ aoc run --day <day> --part <part> # Run a specific day/part (add --time to get t
 aoc submit --day <day> --part <part> --answer <answer> --cookie <cookie> # Submit a specific day/part
 ```
 
+When creating a new day, a test module is created with a test for the example.
+You just need to fill the expected result and provide the sample.txt file
+associated. You can then run this command to check that your solution works with
+the sample data :
+
+```bash
+deno test -A day<N> # Where <N> is the day number
+```
+
 Note: you can get your cookie by logging in to
 [adventofcode.com](https://adventofcode.com/) and copying the value of the
 `session` cookie.

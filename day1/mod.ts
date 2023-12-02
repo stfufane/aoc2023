@@ -5,7 +5,7 @@ export function preprocess(text: string): string[] {
   return text.split("\n").filter((line) => line.length > 0);
 }
 
-export function main(text: string, isPart2: boolean) {
+export function main(text: string, isPart2: boolean): number {
   const input = preprocess(text);
   if (isPart2) {
     return partTwo(input);
