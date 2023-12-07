@@ -1,5 +1,4 @@
 export interface Hand {
-  cards: number[];
   bid: number;
   strength: number;
 }
@@ -59,15 +58,25 @@ export function get_strength(cards: number[], isPart2: boolean): number {
     }
   }
 
+  let card_strength = 0;
   switch (card_occurrences[0][1]) {
     case 5:
     case 4:
-      return card_occurrences[0][1] + 1;
+      card_strength = card_occurrences[0][1] + 1;
+      break;
     case 3:
-      return card_occurrences[1][1] == 2 ? card_occurrences[0][1] + 1 : 3;
+      card_strength = card_occurrences[1][1] == 2
+        ? card_occurrences[0][1] + 1
+        : 3;
+      break;
     case 2:
-      return card_occurrences[1][1] == 2 ? 2 : 1;
+      card_strength = card_occurrences[1][1] == 2 ? 2 : 1;
+      break;
     default:
-      return 0;
+      card_strength = 0;
   }
+
+  return cards
+    .map((card, index) => card * Math.pow(10, cards.length - index - 1))
+    .reduce((a, b) => a + b, card_strength * 100_000);
 }

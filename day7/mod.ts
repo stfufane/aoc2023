@@ -4,11 +4,15 @@ import { get_strength, Hand, letter_to_number } from "./types.ts";
 
 export function preprocess(text: string, isPart2: boolean): Hand[] {
   return text.split("\n").map((line) => {
-    const cards = line.split(" ")[0].split("").map((card_letter) =>
-      letter_to_number(card_letter, isPart2)
-    );
-    const bid = Number(line.split(" ")[1]);
-    return { cards, bid, strength: get_strength(cards, isPart2) };
+    return {
+      bid: Number(line.split(" ")[1]),
+      strength: get_strength(
+        line.split(" ")[0].split("").map((card_letter) =>
+          letter_to_number(card_letter, isPart2)
+        ),
+        isPart2,
+      ),
+    };
   });
 }
 
