@@ -6,6 +6,17 @@ export interface Race {
   distance: number;
 }
 
+// Solve quadratic equation for time
+export function beat_record(race: Race): number {
+  const delta = race.time ** 2 - 4 * race.distance;
+  const rdelta = Math.sqrt(delta);
+
+  const t1 = Math.floor((race.time - rdelta) / 2.0);
+  const t2 = Math.ceil((race.time + rdelta) / 2.0);
+
+  return t2 - t1 - 1;
+}
+
 export function preprocess(text: string): Race[] {
   const [times_line, distances_line] = text.split("\n").map((x) =>
     x.split(/\s+/)
