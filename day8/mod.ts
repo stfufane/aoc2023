@@ -1,30 +1,29 @@
 import { partOne } from "./partOne/mod.ts";
 import { partTwo } from "./partTwo/mod.ts";
 
-interface MapInstruction {
-  start: string;
-  L: string;
-  R: string;
-}
-
 export interface MapInstructions {
-  directions: string[];
-  instructions: MapInstruction[];
+  directions: number[];
+  instructions: Map<string, string[]>;
 }
 
 export function preprocess(text: string): MapInstructions {
   return {
-    directions: text.split("\n\n")[0].split(""),
-    instructions: text
-      .split("\n")
-      .slice(2)
-      .map((line) => line.replaceAll(/[=\(,\)]/g, ""))
-      .map(
-        (line) => {
-          const [start, L, R] = line.split(/\s+/g);
-          return { start, L, R };
-        },
-      ),
+    directions: text.split("\n\n")[0]
+      .split("").map((direction) => {
+        return direction == "L" ? 0 : 1;
+      }),
+    instructions: new Map(
+      text
+        .split("\n")
+        .slice(2)
+        .map((line) => line.replaceAll(/[=\(,\)]/g, ""))
+        .map(
+          (line) => {
+            const [start, L, R] = line.split(/\s+/g);
+            return [start, [L, R]];
+          },
+        ),
+    ),
   };
 }
 
