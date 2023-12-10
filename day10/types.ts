@@ -1,3 +1,5 @@
+import { hash_pair } from "../utils.ts";
+
 export enum Tile {
   Ground = ".",
   Start = "S",
@@ -133,14 +135,14 @@ function getStartCoordinates(grid: Grid): Coordinates {
   throw new Error("No start found");
 }
 
-export function getLoopSteps(grid: Grid): Map<string, number> {
-  const loop_coordinates = new Map<string, number>();
+export function getLoopSteps(grid: Grid): Map<number, number> {
+  const loop_coordinates = new Map<number, number>();
   const start = getStartCoordinates(grid);
   let count = 0;
   let current: Coordinates = start;
   let previous: Coordinates = start;
   do {
-    loop_coordinates.set(`${current.x},${current.y}`, count);
+    loop_coordinates.set(hash_pair(current.x, current.y), count);
     const tile = grid.tiles[current.y][current.x];
     // Get possible movements from current tile
     const next_directions = getDirections(tile);
