@@ -65,9 +65,7 @@ export function get_strength(cards: number[], isPart2: boolean): number {
       card_strength = card_occurrences[0][1] + 1;
       break;
     case 3:
-      card_strength = card_occurrences[1][1] == 2
-        ? card_occurrences[0][1] + 1
-        : 3;
+      card_strength = card_occurrences[1][1] == 2 ? 4 : 3;
       break;
     case 2:
       card_strength = card_occurrences[1][1] == 2 ? 2 : 1;

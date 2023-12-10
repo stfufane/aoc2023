@@ -8,8 +8,7 @@ export function partTwo(grid: Grid): number {
   for (let y = 0; y < grid.tiles.length - 1; y++) {
     let winding_number = 0;
     for (let x = 0; x < grid.tiles[y].length; x++) {
-      const p = { x, y };
-      const step = loop_coordinates.get(`${p.x},${p.y}`);
+      const step = loop_coordinates.get(`${x},${y}`);
       if (step != undefined) {
         // Process winding number for the current row.
         // For that we check the point below the current point
