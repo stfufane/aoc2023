@@ -2,7 +2,7 @@ import { checkSpringsPattern, SpringRow } from "../types.ts";
 
 export function partOne(spring_rows: SpringRow[]): number {
   return spring_rows.map((row) => {
-    console.log(row);
+    // console.log(row);
     let working_combinations = 0;
     // Springs contains ?, # and .
     // We need to check every combination replacing ? with . or #

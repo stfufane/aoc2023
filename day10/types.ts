@@ -1,4 +1,4 @@
-import { hash_pair } from "../utils.ts";
+import { Coordinates, hash_pair } from "../utils.ts";
 
 export enum Tile {
   Ground = ".",
@@ -16,11 +16,6 @@ enum Direction {
   South,
   East,
   West,
-}
-
-interface Coordinates {
-  x: number;
-  y: number;
 }
 
 export interface Grid {

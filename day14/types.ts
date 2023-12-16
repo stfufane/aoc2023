@@ -50,12 +50,16 @@ function tiltNorth(dish: Dish) {
       if (tile !== Tile.Boulder) {
         continue;
       }
-      for (let previous = i - 1; previous >= 0; previous--) {
-        if (dish.tiles[previous][j] !== Tile.Empty) {
-          break;
-        }
-        dish.tiles[previous][j] = Tile.Boulder;
-        dish.tiles[previous + 1][j] = Tile.Empty;
+      let nb_empty = 0;
+      while (
+        (i - nb_empty - 1) >= 0 &&
+        dish.tiles[i - nb_empty - 1][j] === Tile.Empty
+      ) {
+        nb_empty++;
+      }
+      if (nb_empty > 0) {
+        dish.tiles[i - nb_empty][j] = Tile.Boulder;
+        dish.tiles[i][j] = Tile.Empty;
       }
     }
   }
@@ -70,12 +74,16 @@ function tiltSouth(dish: Dish) {
       if (tile !== Tile.Boulder) {
         continue;
       }
-      for (let next = i + 1; next < dish.tiles.length; next++) {
-        if (dish.tiles[next][j] !== Tile.Empty) {
-          break;
-        }
-        dish.tiles[next][j] = Tile.Boulder;
-        dish.tiles[next - 1][j] = Tile.Empty;
+      let nb_empty = 0;
+      while (
+        (i + nb_empty + 1) < dish.tiles.length &&
+        dish.tiles[i + nb_empty + 1][j] === Tile.Empty
+      ) {
+        nb_empty++;
+      }
+      if (nb_empty > 0) {
+        dish.tiles[i + nb_empty][j] = Tile.Boulder;
+        dish.tiles[i][j] = Tile.Empty;
       }
     }
   }
@@ -90,12 +98,13 @@ function tiltWest(dish: Dish) {
       if (line[i] !== Tile.Boulder) {
         continue;
       }
-      for (let previous = i - 1; previous >= 0; previous--) {
-        if (line[previous] !== Tile.Empty) {
-          break;
-        }
-        line[previous] = Tile.Boulder;
-        line[previous + 1] = Tile.Empty;
+      let nb_empty = 0;
+      while ((i - nb_empty - 1) >= 0 && line[i - nb_empty - 1] === Tile.Empty) {
+        nb_empty++;
+      }
+      if (nb_empty > 0) {
+        line[i - nb_empty] = Tile.Boulder;
+        line[i] = Tile.Empty;
       }
     }
   }
@@ -110,12 +119,16 @@ function tiltEast(dish: Dish) {
       if (line[i] !== Tile.Boulder) {
         continue;
       }
-      for (let next = i + 1; next < line.length; next++) {
-        if (line[next] !== Tile.Empty) {
-          break;
-        }
-        line[next] = Tile.Boulder;
-        line[next - 1] = Tile.Empty;
+      let nb_empty = 0;
+      while (
+        (i + nb_empty + 1) < line.length &&
+        line[i + nb_empty + 1] === Tile.Empty
+      ) {
+        nb_empty++;
+      }
+      if (nb_empty > 0) {
+        line[i + nb_empty] = Tile.Boulder;
+        line[i] = Tile.Empty;
       }
     }
   }

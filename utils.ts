@@ -1,3 +1,8 @@
+export interface Coordinates {
+  x: number;
+  y: number;
+}
+
 function gcd(a: number, b: number): number {
   return b == 0 ? a : gcd(b, a % b);
 }

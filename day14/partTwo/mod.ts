@@ -1,4 +1,3 @@
-import { hash_string } from "../../utils.ts";
 import { Direction, Dish, northSupport, tilt } from "../types.ts";
 
 export function partTwo(dish: Dish): number {
@@ -9,26 +8,21 @@ export function partTwo(dish: Dish): number {
     Direction.East,
   ];
 
-  const cycles: number[] = [];
-  let north_supports: number[] = [];
-  let cycle_length = 0;
+  const north_supports: number[] = [];
+  let to_process = 1_000_000_000;
   while (true) {
-    for (const direction of directions) {
-      tilt(dish, direction);
-    }
-    const cycle = hash_string(
-      dish.tiles.map((tiles) => tiles.join("")).join(""),
-    );
+    directions.forEach((direction) => tilt(dish, direction));
+    to_process--;
     const north_support = northSupport(dish);
-    const found = cycles.indexOf(cycle);
-    if (found > -1) {
-      cycle_length = cycles.length - found;
-      north_supports = north_supports.slice(found);
-      break;
+    const found = north_supports.indexOf(north_support);
+    if (
+      found > 1 &&
+      north_supports[found - 1] === north_supports[north_supports.length - 1]
+    ) {
+      return north_supports.slice(
+        found,
+      )[to_process % (north_supports.length - found)];
     }
-    cycles.push(cycle);
     north_supports.push(north_support);
   }
-  const final_index = (1_000_000_000 - cycles.length - 1) % cycle_length;
-  return north_supports[final_index];
 }

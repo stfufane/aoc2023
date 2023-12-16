@@ -61,7 +61,7 @@ export class Beam {
   }
 }
 
-export function outOfBounds(
+function outOfBounds(
   coordinates: Coordinates,
   contraption: Contraption,
 ): boolean {
@@ -71,45 +71,56 @@ export function outOfBounds(
     coordinates.x >= contraption.tiles[0].length;
 }
 
+const DirectionFlip = new Map<Tile, Map<Direction, Direction>>([
+  [
+    Tile.LeftMirror,
+    new Map([
+      [Direction.North, Direction.East],
+      [Direction.South, Direction.West],
+      [Direction.West, Direction.South],
+      [Direction.East, Direction.North],
+    ]),
+  ],
+  [
+    Tile.RightMirror,
+    new Map([
+      [Direction.North, Direction.West],
+      [Direction.South, Direction.East],
+      [Direction.West, Direction.North],
+      [Direction.East, Direction.South],
+    ]),
+  ],
+]);
+
 export function energizedTiles(
   contraption: Contraption,
   start_beam: Beam,
 ): number {
-  const visited = new Map<string, number>();
-  const setVisited = (beam: Beam): void => {
-    const nb_visited = visited.get(beam.getKey()) || 0;
-    visited.set(beam.getKey(), nb_visited + 1);
-  };
-
+  const energized = new Set<string>();
   const beams_to_process = new Array<Beam>();
-  const beam_starts = new Set<string>();
+  const beam_paths = new Set<string>();
+
   // Fake path to start outside of the grid.
   beams_to_process.push(start_beam);
 
   while (beams_to_process.length > 0) {
     const beam = beams_to_process.shift() as Beam;
 
-    // Check if we didn't process this beam already.
-    if (beam_starts.size > 0 && beam_starts.has(beam.getPath())) {
-      continue;
-    }
-    beam_starts.add(beam.getPath());
-
     // Loop until we find a tile that splits the signal and create new beams
     let beam_consumed = false;
-    const beam_paths = new Set<string>();
     while (!beam_consumed) {
-      setVisited(beam);
+      // Avoid getting stuck in a loop and revisit the same path.
+      if (beam_paths.has(beam.getPath())) {
+        break;
+      }
+      beam_paths.add(beam.getPath());
+
+      energized.add(beam.getKey());
       const next_coordinates = beam.getNextCoordinates();
       if (outOfBounds(next_coordinates, contraption)) {
         break;
       }
       beam.setCoordinates(next_coordinates);
-      // Avoid getting stuck in a loop :)
-      if (beam_paths.has(beam.getPath())) {
-        break;
-      }
-      beam_paths.add(beam.getPath());
 
       const next_tile =
         contraption.tiles[next_coordinates.y][next_coordinates.x];
@@ -117,65 +128,41 @@ export function energizedTiles(
         case Tile.Empty:
           continue;
         case Tile.LeftMirror:
-          switch (beam.direction) {
-            case Direction.North:
-              beam.direction = Direction.East;
-              break;
-            case Direction.South:
-              beam.direction = Direction.West;
-              break;
-            case Direction.West:
-              beam.direction = Direction.South;
-              break;
-            case Direction.East:
-              beam.direction = Direction.North;
-              break;
-          }
-          continue;
         case Tile.RightMirror:
-          switch (beam.direction) {
-            case Direction.North:
-              beam.direction = Direction.West;
-              break;
-            case Direction.South:
-              beam.direction = Direction.East;
-              break;
-            case Direction.West:
-              beam.direction = Direction.North;
-              break;
-            case Direction.East:
-              beam.direction = Direction.South;
-              break;
-          }
+          beam.direction = DirectionFlip.get(next_tile)!.get(
+            beam.direction,
+          )!;
           continue;
         case Tile.VSplitter:
           switch (beam.direction) {
-            case Direction.North:
-            case Direction.South:
-              continue;
             case Direction.West:
             case Direction.East:
-              beams_to_process.push(new Beam(beam.x, beam.y, Direction.North));
-              beams_to_process.push(new Beam(beam.x, beam.y, Direction.South));
+              beams_to_process.push(
+                new Beam(beam.x, beam.y, Direction.North),
+                new Beam(beam.x, beam.y, Direction.South),
+              );
               beam_consumed = true;
               break;
+            default:
+              continue;
           }
           break;
         case Tile.HSplitter:
           switch (beam.direction) {
             case Direction.North:
             case Direction.South:
-              beams_to_process.push(new Beam(beam.x, beam.y, Direction.West));
-              beams_to_process.push(new Beam(beam.x, beam.y, Direction.East));
+              beams_to_process.push(
+                new Beam(beam.x, beam.y, Direction.West),
+                new Beam(beam.x, beam.y, Direction.East),
+              );
               beam_consumed = true;
               break;
-            case Direction.West:
-            case Direction.East:
+            default:
               continue;
           }
           break;
       }
     }
   }
-  return visited.size - 1;
+  return energized.size - 1;
 }
