@@ -15,6 +15,15 @@ export function hash_pair(x: number, y: number): number {
   return (y << 16) ^ x;
 }
 
+export function hash_tuple(numbers: number[]): number {
+  let hash = 0;
+  for (const number of numbers) {
+    hash = ((hash << 5) - hash) + number;
+    hash |= 0;
+  }
+  return hash;
+}
+
 export function hash_string(s: string): number {
   let hash = 0;
   for (let i = 0; i < s.length; i++) {

@@ -1,4 +1,4 @@
-import { Coordinates } from "../utils.ts";
+import { Coordinates, hash_pair, hash_tuple } from "../utils.ts";
 import {
   ascend,
   BinaryHeap,
@@ -6,15 +6,12 @@ import {
 
 export type Grid = string[];
 
-interface Path {
+interface HeatPath {
   x: number;
   y: number;
   dx: number;
   dy: number;
   straight_moves: number;
-}
-
-interface HeatPath extends Path {
   heat_loss: number;
 }
 
@@ -31,7 +28,7 @@ export function getShortestPath(
   max_steps: number,
 ): number {
   // Implement A-Star algorithm to find the shortest path between start and end.
-  const seen_paths = new Array<Path>();
+  const seen_paths = new Set<number>();
   const heat_paths = new BinaryHeap<HeatPath>((a, b) =>
     ascend(a.heat_loss, b.heat_loss)
   );
@@ -47,24 +44,23 @@ export function getShortestPath(
   while (heat_paths.length > 0) {
     const heat_path = heat_paths.pop()!;
     if (
-      heat_path.x == grid[0].length - 1 &&
-      heat_path.y == grid.length - 1 &&
+      heat_path.x === grid[0].length - 1 &&
+      heat_path.y === grid.length - 1 &&
       heat_path.straight_moves >= min_steps
     ) {
       return heat_path.heat_loss;
     }
 
-    if (
-      seen_paths.find((path) =>
-        path.x === heat_path.x && path.y === heat_path.y &&
-        path.dx === heat_path.dx && path.dy === heat_path.dy &&
-        path.straight_moves == heat_path.straight_moves
-      ) !== undefined
-    ) {
+    const path_hash = hash_tuple([
+      hash_pair(heat_path.x, heat_path.y),
+      hash_pair(heat_path.dx, heat_path.dy),
+      heat_path.straight_moves,
+    ]);
+    if (seen_paths.has(path_hash)) {
       continue;
     }
 
-    seen_paths.push(heat_path);
+    seen_paths.add(path_hash);
 
     if (
       heat_path.straight_moves < max_steps &&
@@ -105,8 +101,8 @@ export function getShortestPath(
       ]
     ) {
       if (
-        (next_dx != heat_path.dx || next_dy != heat_path.dy) &&
-        (next_dx != -heat_path.dx || next_dy != -heat_path.dy)
+        (next_dx !== heat_path.dx || next_dy !== heat_path.dy) &&
+        (next_dx !== -heat_path.dx || next_dy !== -heat_path.dy)
       ) {
         const next_coordinates = {
           x: heat_path.x + next_dx,
@@ -115,10 +111,10 @@ export function getShortestPath(
         // Don't add paths that will go out of bounds after min_steps moves.
         if (
           min_steps > 0 &&
-          (next_dx == 1 && next_coordinates.x > grid[0].length - min_steps ||
-            next_dx == -1 && next_coordinates.x < min_steps ||
-            next_dy == 1 && next_coordinates.y > grid.length - min_steps ||
-            next_dy == -1 && next_coordinates.y < min_steps)
+          (next_dx === 1 && next_coordinates.x > grid[0].length - min_steps ||
+            next_dx === -1 && next_coordinates.x < min_steps ||
+            next_dy === 1 && next_coordinates.y > grid.length - min_steps ||
+            next_dy === -1 && next_coordinates.y < min_steps)
         ) {
           continue;
         }
