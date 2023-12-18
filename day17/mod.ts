@@ -1,7 +1,6 @@
 import { partOne } from "./partOne/mod.ts";
 import { partTwo } from "./partTwo/mod.ts";
-
-export type Grid = string[];
+import { Grid } from "./types.ts";
 
 export function preprocess(text: string): Grid {
   return text.split("\n");
