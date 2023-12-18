@@ -35,9 +35,26 @@ export function colorToInstruction(color: string): Instruction {
   return { direction: direction!, steps, color };
 }
 
+export function buildTrench(instructions: Instruction[]): Array<Hole> {
+  const trench = new Array<Hole>();
+  let current_hole: Hole = { x: 0, y: 0 };
+  for (const instruction of instructions) {
+    const { direction, steps, color: _ } = instruction;
+    const { x: dx, y: dy } = DirectionVectors.get(direction)!;
+    current_hole = {
+      x: current_hole.x + (dx * steps),
+      y: current_hole.y + (dy * steps),
+    };
+    trench.push(current_hole);
+  }
+  // Push the first row again
+  trench.push(trench.at(0)!);
+  return trench;
+}
+
 export function getArea(
   trench: Array<Hole>,
-  instructions: Instruction[],
+  steps: number[],
 ): number {
   // Use shoelace formula to calculate area
   let area = 0;
@@ -46,6 +63,6 @@ export function getArea(
     const { x: x2, y: y2 } = trench[i + 1];
     area += x1 * y2 - y1 * x2;
   }
-  const trench_length = instructions.reduce((acc, curr) => acc + curr.steps, 1);
+  const trench_length = steps.reduce((acc, curr) => acc + curr, 1);
   return (trench_length + 1 + Math.abs(area)) / 2;
 }
