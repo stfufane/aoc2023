@@ -1,7 +1,5 @@
-import { partOne } from "../mod.ts";
-import { SpringRow } from "../types.ts";
+import { SpringRow, validPermutations } from "../types.ts";
 
 export function partTwo(spring_rows: SpringRow[]): number {
-  return 0;
-  partOne(spring_rows);
+  return spring_rows.reduce((acc, row) => acc + validPermutations(row), 0);
 }
