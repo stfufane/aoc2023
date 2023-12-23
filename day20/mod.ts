@@ -35,15 +35,10 @@ export function preprocess(text: string): Map<string, Module> {
       if (!modules.has(output)) {
         modules.set(output, new TestModule(output));
       }
-      modules.get(output)?.inputs.push(name);
-    }
-  }
-
-  // Initialise input values for conjuntion modules
-  for (const [_name, module] of modules) {
-    if (module instanceof Conjunction) {
-      for (const input of module.inputs) {
-        module.inputs_values.set(input, Pulse.Low);
+      const output_module = modules.get(output)!;
+      output_module.inputs.push(name);
+      if (output_module instanceof Conjunction) {
+        output_module.inputs_values.set(name, Pulse.Low);
       }
     }
   }
