@@ -19,3 +19,4 @@ export * as day18 from "./day18/mod.ts";
 export * as day19 from "./day19/mod.ts";
 export * as day20 from "./day20/mod.ts";
 export * as day21 from "./day21/mod.ts";
+export * as day22 from "./day22/mod.ts";
